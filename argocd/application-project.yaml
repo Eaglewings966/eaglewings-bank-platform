@@ -1,0 +1,38 @@
+# Argo CD Application Project for Eaglewings Bank Platform
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: eaglewings
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/yourusername/eaglewings-bank-platform'
+    - 'https://github.com/argoproj/argo-cd'
+  destinations:
+    - namespace: 'production'
+      server: https://kubernetes.default.svc
+    - namespace: 'staging'
+      server: https://kubernetes.default.svc
+    - namespace: 'development'
+      server: https://kubernetes.default.svc
+    - namespace: 'argocd'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceBlacklist:
+    - group: ''
+      kind: ConfigMap
+      name: 'kube-root-ca.crt'
+  roles:
+    - name: admins
+      policies:
+        - p, proj:eaglewings:admins, applications, get, eaglewings/*, allow
+        - p, proj:eaglewings:admins, applications, create, eaglewings/*, allow
+        - p, proj:eaglewings:admins, applications, update, eaglewings/*, allow
+        - p, proj:eaglewings:admins, applications, delete, eaglewings/*, allow
+        - p, proj:eaglewings:admins, repositories, get, eaglewings/*, allow
+        - p, proj:eaglewings:admins, repositories, create, eaglewings/*, allow
+      groups:
+        - devops-team

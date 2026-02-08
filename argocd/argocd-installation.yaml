@@ -1,0 +1,44 @@
+# Argo CD Installation via Helm Chart
+# Run: helm repo add argo https://argoproj.github.io/argo-helm
+# Run: helm repo update
+# Run: helm install argocd argo/argo-cd -n argocd -f argocd-values.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  chart: argo-cd
+  repo: https://argoproj.github.io/argo-helm
+  version: "5.51.6"
+  values:
+    global:
+      domain: argocd.eaglewings-bank.local
+    
+    server:
+      service:
+        type: LoadBalancer
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        hosts:
+          - argocd.eaglewings-bank.local
+    
+    configs:
+      secret:
+        argocdServerAdminPassword: "$2a$10$rRyq8Q8sPTML8pCCC3l7e.T7XMaD1I8D5qKMvhx0QH8K6pXLxYQ9G" # Password hash for admin
+    
+    repoServer:
+      autoscaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 4
+    
+    controller:
+      replicas: 2

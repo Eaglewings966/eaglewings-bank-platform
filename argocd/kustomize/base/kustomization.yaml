@@ -1,0 +1,23 @@
+# Base Kustomization for all services
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: production
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+
+commonLabels:
+  app: eaglewings-bank
+  managed-by: argocd
+
+commonAnnotations:
+  deployment-tool: argocd
+  organization: eaglewings
+
+replicas:
+  - name: '*'
+    count: 2

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  node_env: "production"
+  log_level: "info"
+  api_timeout: "30000"

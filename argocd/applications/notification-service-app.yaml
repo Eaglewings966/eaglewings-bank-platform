@@ -1,0 +1,34 @@
+# Notification Service Argo CD Application
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: notification-service
+  namespace: argocd
+spec:
+  project: eaglewings
+  source:
+    repoURL: https://github.com/yourusername/eaglewings-bank-platform
+    targetRevision: main
+    path: argocd/kustomize/overlays/prod
+    kustomize:
+      nameSuffix: -notification
+      images:
+        - name: notification-service
+          newTag: latest
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 10

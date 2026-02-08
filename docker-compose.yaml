@@ -1,0 +1,137 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: eaglewings_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: eaglewings_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - eaglewings-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./backend/services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      JWT_SECRET: your-secret-key-change-in-production
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Account Service
+  account-service:
+    build:
+      context: ./backend/services/account-service
+      dockerfile: Dockerfile
+    container_name: account_service
+    ports:
+      - "3002:3002"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Transaction Service
+  transaction-service:
+    build:
+      context: ./backend/services/transaction-service
+      dockerfile: Dockerfile
+    container_name: transaction_service
+    ports:
+      - "3003:3003"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ./backend/services/payment-service
+      dockerfile: Dockerfile
+    container_name: payment_service
+    ports:
+      - "3004:3004"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Notification Service
+  notification-service:
+    build:
+      context: ./backend/services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification_service
+    ports:
+      - "3005:3005"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Analytics Service
+  analytics-service:
+    build:
+      context: ./backend/services/analytics-service
+      dockerfile: Dockerfile
+    container_name: analytics_service
+    ports:
+      - "3006:3006"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/eaglewings_db
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - eaglewings-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: eaglewings_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:3001
+    depends_on:
+      - auth-service
+    networks:
+      - eaglewings-network
+
+volumes:
+  postgres_data:
+
+networks:
+  eaglewings-network:
+    driver: bridge

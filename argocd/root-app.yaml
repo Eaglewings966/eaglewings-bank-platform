@@ -1,0 +1,30 @@
+# Argo CD main application that manages all other applications
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eaglewings-apps
+  namespace: argocd
+spec:
+  project: eaglewings
+  source:
+    repoURL: https://github.com/yourusername/eaglewings-bank-platform
+    targetRevision: main
+    path: argocd/applications
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allow:
+        empty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

@@ -1,0 +1,34 @@
+# Development Environment Kustomization Overlay
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: development
+
+bases:
+  - ../../base
+
+commonLabels:
+  environment: development
+
+commonAnnotations:
+  environment: development
+
+replicas:
+  - name: app
+    count: 1
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+
+configMapGenerator:
+  - name: app-config
+    behavior: merge
+    literals:
+      - node_env=development
+      - log_level=debug
+      - api_timeout=30000
+
+images:
+  - name: app
+    newTag: "dev"

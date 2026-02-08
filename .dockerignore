@@ -1,0 +1,9 @@
+.env.example
+docker-compose.override.yaml
+node_modules/
+.DS_Store
+.vscode/
+.idea/
+*.log
+dist/
+build/

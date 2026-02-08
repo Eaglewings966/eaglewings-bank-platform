@@ -1,0 +1,19 @@
+{
+  "name": "eaglewings-bank-services",
+  "version": "1.0.0",
+  "description": "Backend services for EAGLEWINGS Bank Platform",
+  "scripts": {
+    "start:all": "concurrently \"npm run start:auth\" \"npm run start:account\" \"npm run start:transaction\" \"npm run start:payment\" \"npm run start:notification\" \"npm run start:analytics\"",
+    "start:auth": "cd services/auth-service && npm start",
+    "start:account": "cd services/account-service && npm start",
+    "start:transaction": "cd services/transaction-service && npm start",
+    "start:payment": "cd services/payment-service && npm start",
+    "start:notification": "cd services/notification-service && npm start",
+    "start:analytics": "cd services/analytics-service && npm start",
+    "install:all": "npm install && cd services/auth-service && npm install && cd ../account-service && npm install && cd ../transaction-service && npm install && cd ../payment-service && npm install && cd ../notification-service && npm install && cd ../analytics-service && npm install && cd ../../shared && npm install"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
